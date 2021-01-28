@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+
+    <title>Digital Clock</title>
+    <style>
+        .c_btns {
+            background-color: #0062FF;
+            overflow: hidden;
+            color: white;
+            box-shadow: none;
+            border: 0;
+            border-radius: 3px;
+            padding: 6px 10px 4px 10px;
+            font-size: medium;
+            margin-left: 20px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .modal {
+            display: none;
+            position: absolute;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 90%;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: #10101E;
+            padding: 20px;
+            margin: auto;
+            width: 75%;
+            border-radius: 10px;
+            border: 2px solid #2E94E3;
+            -webkit-animation-name: animatetop;
+            -webkit-animation-duration: 0.5s;
+            animation-name: animatetop;
+            animation-duration: 0.5s;
+        }
+
+        .modal-content:hover {
+            background: silver;
+            box-shadow: 0 0 30px silver;
+        }
+
+        .close-btn {
+            float: right;
+            color: #0062FF;
+            font-size: 24px;
+            font-weight: bold;
+
+        }
+
+        .close-btn:hover {
+            color: black;
+        }
+
+        @-webkit-keyframes animatetop {
+            from {
+                top: -300px;
+                opacity: 0
+            }
+
+            to {
+                top: 0;
+                opacity: 1
+            }
+        }
+
+        @keyframes animatetop {
+            from {
+                top: -300px;
+                opacity: 0
+            }
+
+            to {
+                top: 0;
+                opacity: 1
+            }
+        }
+    </style>
+</head>
+
+<body onload="initClock(val = 'Asia/Kolkata')">
+    <div class="datetime">
+        <div class="date">
+            <span id="dayname">Day</span>,
+            <span id="month">Month</span>
+            <span id="daynum">00</span>,
+            <span id="year">Year</span>
+        </div>
+        <div class="time">
+            <span id="hour">00</span>:
+            <span id="minutes">00</span>:
+            <span id="seconds">00</span>
+            <span id="period">AM</span>
+        </div>
+        <center>
+            <label style="font-size: small; color: purple;">Select Country</label><br>
+            <a href='#' id="modal-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <label id="modal-btn-label">INDIA</label>
+            </a>
+        </center>
+
+    </div>
+    <div class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-btn_x">&times;</span>
+            <ul class="country row" style="list-style-type:none;columns:4">
+                <li>
+                    <button id="Amsterdam" class="c_btns " value='Europe/Amsterdam'
+                        onclick="getVal(this.id)">Amsterdam</button>
+                </li>
+                <li>
+                    <button id="Bangkok" class="c_btns " value='Asia/Bangkok' onclick="getVal(this.id)">Bangkok</button>
+                </li>
+                <li>
+                    <button id="China" class="c_btns" value='Asia/Shanghai' onclick="getVal(this.id)">China</button>
+                </li>
+                <li>
+                    <button id="India" class="c_btns" value='Asia/Kolkata' onclick="getVal(this.id)">India</button>
+                </li>
+                <li>
+                    <button id="Istanbul" class="c_btns" value='Europe/Istanbul'
+                        onclick="getVal(this.id)">Istanbul</button>
+                </li>
+                <li>
+                    <button id="Mexico" class="c_btns" value='America/Mexico_City'
+                        onclick="getVal(this.id)">Mexico</button>
+                </li>
+                <li>
+                    <button id="Melbourne" class="c_btns" value='Australia/Melbourne'
+                        onclick="getVal(this.id)">Melbourne</button>
+                </li>
+                <li>
+                    <button id="Moscow" class="c_btns" value='Europe/Moscow' onclick="getVal(this.id)">Moscow</button>
+                </li>
+                <li>
+                    <button id="New_York" class="c_btns" value='America/New_York' onclick="getVal(this.id)">New
+                        York</button>
+                </li>
+                <li>
+                    <button id="Sydney" class="c_btns" value='Australia/Sydney'
+                        onclick="getVal(this.id)">Sydney</button>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        let modalBtn = document.getElementById("modal-btn")
+        let modal = document.querySelector(".modal")
+        let closeBtn = document.querySelector(".close-btn")
+        modalBtn.onclick = function () {
+            modal.style.display = "block";
+        }
+        closeBtn.onclick = function () {
+            modal.style.display = "none";
+
+        }
+        window.onclick = function (e) {
+            if (e.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        var val;
+        function getVal(id_name) {
+            val = document.getElementById(id_name).value;
+            document.getElementById('modal-btn-label').innerText = id_name;
+            document.getElementById('close-btn_x').click();
+            initClock(val);
+        }
+        function updateClock(val) {
+            var now1 = new Date().toLocaleString("en-US", { timeZone: val });
+            now = new Date(now1);
+            var dname = now.getDay(),
+                mo = now.getMonth(),
+                dnum = now.getDate(),
+                yr = now.getFullYear(),
+                hou = now.getHours(),
+                min = now.getMinutes(),
+                sec = now.getSeconds(),
+                pe = "AM";
+            if (hou >= 12) {
+                pe = "PM";
+            }
+            if (hou == 0) {
+                hou = 12;
+            }
+            if (hou > 12) {
+                hou = hou - 12;
+            }
+
+
+            Number.prototype.pad = function (digits) {
+                for (var n = this.toString(); n.length < digits; n = 0 + n);
+                return n;
+            }
+
+            var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thrusday", "Friday", "Saturday"];
+            var ids = ["dayname", "month", "daynum", "year", "hour", "minutes", "seconds", "period"];
+            var values = [weekdays[dname], months[mo], dnum.pad(2), yr, ('0' + hou).substr(-2), ('0' + min).substr(-2), ('0' + sec).substr(-2), pe];
+            for (var i = 0; i < ids.length; i++) {
+                document.getElementById(ids[i]).firstChild.nodeValue = values[i];
+            }
+        }
+
+        function initClock(val) {
+            updateClock(val);
+            window.setInterval("updateClock(val)", 1000);
+        }
+    </script>
+</body>
+
+</html>
+<!--
+  'Europe/Andorra',
+  'Asia/Dubai',
+  'Asia/Kabul',
+  'Europe/Tirane',
+  'Asia/Yerevan',
+  'Antarctica/Casey',
+  'Antarctica/Davis',
+  'Antarctica/DumontDUrville', // https://bugs.chromium.org/p/chromium/issues/detail?id=928068
+  'Antarctica/Mawson',
+  'Antarctica/Palmer',
+  'Antarctica/Rothera',
+  'Antarctica/Syowa',
+  'Antarctica/Troll',
+  'Antarctica/Vostok',
+  'America/Argentina/Buenos_Aires',
+  'America/Argentina/Cordoba',
+  'America/Argentina/Salta',
+  'America/Argentina/Jujuy',
+  'America/Argentina/Tucuman',
+  'America/Argentina/Catamarca',
+  'America/Argentina/La_Rioja',
+  'America/Argentina/San_Juan',
+  'America/Argentina/Mendoza',
+  'America/Argentina/San_Luis',
+  'America/Argentina/Rio_Gallegos',
+  'America/Argentina/Ushuaia',
+  'Pacific/Pago_Pago',
+  'Europe/Vienna',
+  'Australia/Lord_Howe',
+  'Antarctica/Macquarie',
+  'Australia/Hobart',
+  'Australia/Currie',
+  'Australia/Melbourne',
+  'Australia/Sydney',
+  'Australia/Broken_Hill',
+  'Australia/Brisbane',
+  'Australia/Lindeman',
+  'Australia/Adelaide',
+  'Australia/Darwin',
+  'Australia/Perth',
+  'Australia/Eucla',
+  'Asia/Baku',
+  'America/Barbados',
+  'Asia/Dhaka',
+  'Europe/Brussels',
+  'Europe/Sofia',
+  'Atlantic/Bermuda',
+  'Asia/Brunei',
+  'America/La_Paz',
+  'America/Noronha',
+  'America/Belem',
+  'America/Fortaleza',
+  'America/Recife',
+  'America/Araguaina',
+  'America/Maceio',
+  'America/Bahia',
+  'America/Sao_Paulo',
+  'America/Campo_Grande',
+  'America/Cuiaba',
+  'America/Santarem',
+  'America/Porto_Velho',
+  'America/Boa_Vista',
+  'America/Manaus',
+  'America/Eirunepe',
+  'America/Rio_Branco',
+  'America/Nassau',
+  'Asia/Thimphu',
+  'Europe/Minsk',
+  'America/Belize',
+  'America/St_Johns',
+  'America/Halifax',
+  'America/Glace_Bay',
+  'America/Moncton',
+  'America/Goose_Bay',
+  'America/Blanc-Sablon',
+  'America/Toronto',
+  'America/Nipigon',
+  'America/Thunder_Bay',
+  'America/Iqaluit',
+  'America/Pangnirtung',
+  'America/Atikokan',
+  'America/Winnipeg',
+  'America/Rainy_River',
+  'America/Resolute',
+  'America/Rankin_Inlet',
+  'America/Regina',
+  'America/Swift_Current',
+  'America/Edmonton',
+  'America/Cambridge_Bay',
+  'America/Yellowknife',
+  'America/Inuvik',
+  'America/Creston',
+  'America/Dawson_Creek',
+  'America/Fort_Nelson',
+  'America/Vancouver',
+  'America/Whitehorse',
+  'America/Dawson',
+  'Indian/Cocos',
+  'Europe/Zurich',
+  'Africa/Abidjan',
+  'Pacific/Rarotonga',
+  'America/Santiago',
+  'America/Punta_Arenas',
+  'Pacific/Easter',
+  'Asia/Shanghai',
+  'Asia/Urumqi',
+  'America/Bogota',
+  'America/Costa_Rica',
+  'America/Havana',
+  'Atlantic/Cape_Verde',
+  'America/Curacao',
+  'Indian/Christmas',
+  'Asia/Nicosia',
+  'Asia/Famagusta',
+  'Europe/Prague',
+  'Europe/Berlin',
+  'Europe/Copenhagen',
+  'America/Santo_Domingo',
+  'Africa/Algiers',
+  'America/Guayaquil',
+  'Pacific/Galapagos',
+  'Europe/Tallinn',
+  'Africa/Cairo',
+  'Africa/El_Aaiun',
+  'Europe/Madrid',
+  'Africa/Ceuta',
+  'Atlantic/Canary',
+  'Europe/Helsinki',
+  'Pacific/Fiji',
+  'Atlantic/Stanley',
+  'Pacific/Chuuk',
+  'Pacific/Pohnpei',
+  'Pacific/Kosrae',
+  'Atlantic/Faroe',
+  'Europe/Paris',
+  'Europe/London',
+  'Asia/Tbilisi',
+  'America/Cayenne',
+  'Africa/Accra',
+  'Europe/Gibraltar',
+  'America/Godthab',
+  'America/Danmarkshavn',
+  'America/Scoresbysund',
+  'America/Thule',
+  'Europe/Athens',
+  'Atlantic/South_Georgia',
+  'America/Guatemala',
+  'Pacific/Guam',
+  'Africa/Bissau',
+  'America/Guyana',
+  'Asia/Hong_Kong',
+  'America/Tegucigalpa',
+  'America/Port-au-Prince',
+  'Europe/Budapest',
+  'Asia/Jakarta',
+  'Asia/Pontianak',
+  'Asia/Makassar',
+  'Asia/Jayapura',
+  'Europe/Dublin',
+  'Asia/Jerusalem',
+  'Asia/Kolkata',
+  'Indian/Chagos',
+  'Asia/Baghdad',
+  'Asia/Tehran',
+  'Atlantic/Reykjavik',
+  'Europe/Rome',
+  'America/Jamaica',
+  'Asia/Amman',
+  'Asia/Tokyo',
+  'Africa/Nairobi',
+  'Asia/Bishkek',
+  'Pacific/Tarawa',
+  'Pacific/Enderbury',
+  'Pacific/Kiritimati',
+  'Asia/Pyongyang',
+  'Asia/Seoul',
+  'Asia/Almaty',
+  'Asia/Qyzylorda',
+  'Asia/Qostanay', // https://bugs.chromium.org/p/chromium/issues/detail?id=928068
+  'Asia/Aqtobe',
+  'Asia/Aqtau',
+  'Asia/Atyrau',
+  'Asia/Oral',
+  'Asia/Beirut',
+  'Asia/Colombo',
+  'Africa/Monrovia',
+  'Europe/Vilnius',
+  'Europe/Luxembourg',
+  'Europe/Riga',
+  'Africa/Tripoli',
+  'Africa/Casablanca',
+  'Europe/Monaco',
+  'Europe/Chisinau',
+  'Pacific/Majuro',
+  'Pacific/Kwajalein',
+  'Asia/Yangon',
+  'Asia/Ulaanbaatar',
+  'Asia/Hovd',
+  'Asia/Choibalsan',
+  'Asia/Macau',
+  'America/Martinique',
+  'Europe/Malta',
+  'Indian/Mauritius',
+  'Indian/Maldives',
+  'America/Mexico_City',
+  'America/Cancun',
+  'America/Merida',
+  'America/Monterrey',
+  'America/Matamoros',
+  'America/Mazatlan',
+  'America/Chihuahua',
+  'America/Ojinaga',
+  'America/Hermosillo',
+  'America/Tijuana',
+  'America/Bahia_Banderas',
+  'Asia/Kuala_Lumpur',
+  'Asia/Kuching',
+  'Africa/Maputo',
+  'Africa/Windhoek',
+  'Pacific/Noumea',
+  'Pacific/Norfolk',
+  'Africa/Lagos',
+  'America/Managua',
+  'Europe/Amsterdam',
+  'Europe/Oslo',
+  'Asia/Kathmandu',
+  'Pacific/Nauru',
+  'Pacific/Niue',
+  'Pacific/Auckland',
+  'Pacific/Chatham',
+  'America/Panama',
+  'America/Lima',
+  'Pacific/Tahiti',
+  'Pacific/Marquesas',
+  'Pacific/Gambier',
+  'Pacific/Port_Moresby',
+  'Pacific/Bougainville',
+  'Asia/Manila',
+  'Asia/Karachi',
+  'Europe/Warsaw',
+  'America/Miquelon',
+  'Pacific/Pitcairn',
+  'America/Puerto_Rico',
+  'Asia/Gaza',
+  'Asia/Hebron',
+  'Europe/Lisbon',
+  'Atlantic/Madeira',
+  'Atlantic/Azores',
+  'Pacific/Palau',
+  'America/Asuncion',
+  'Asia/Qatar',
+  'Indian/Reunion',
+  'Europe/Bucharest',
+  'Europe/Belgrade',
+  'Europe/Kaliningrad',
+  'Europe/Moscow',
+  'Europe/Simferopol',
+  'Europe/Kirov',
+  'Europe/Astrakhan',
+  'Europe/Volgograd',
+  'Europe/Saratov',
+  'Europe/Ulyanovsk',
+  'Europe/Samara',
+  'Asia/Yekaterinburg',
+  'Asia/Omsk',
+  'Asia/Novosibirsk',
+  'Asia/Barnaul',
+  'Asia/Tomsk',
+  'Asia/Novokuznetsk',
+  'Asia/Krasnoyarsk',
+  'Asia/Irkutsk',
+  'Asia/Chita',
+  'Asia/Yakutsk',
+  'Asia/Khandyga',
+  'Asia/Vladivostok',
+  'Asia/Ust-Nera',
+  'Asia/Magadan',
+  'Asia/Sakhalin',
+  'Asia/Srednekolymsk',
+  'Asia/Kamchatka',
+  'Asia/Anadyr',
+  'Asia/Riyadh',
+  'Pacific/Guadalcanal',
+  'Indian/Mahe',
+  'Africa/Khartoum',
+  'Europe/Stockholm',
+  'Asia/Singapore',
+  'America/Paramaribo',
+  'Africa/Juba',
+  'Africa/Sao_Tome',
+  'America/El_Salvador',
+  'Asia/Damascus',
+  'America/Grand_Turk',
+  'Africa/Ndjamena',
+  'Indian/Kerguelen',
+  'Asia/Bangkok',
+  'Asia/Dushanbe',
+  'Pacific/Fakaofo',
+  'Asia/Dili',
+  'Asia/Ashgabat',
+  'Africa/Tunis',
+  'Pacific/Tongatapu',
+  'Europe/Istanbul',
+  'America/Port_of_Spain',
+  'Pacific/Funafuti',
+  'Asia/Taipei',
+  'Europe/Kiev',
+  'Europe/Uzhgorod',
+  'Europe/Zaporozhye',
+  'Pacific/Wake',
+  'America/New_York',
+  'America/Detroit',
+  'America/Kentucky/Louisville',
+  'America/Kentucky/Monticello',
+  'America/Indiana/Indianapolis',
+  'America/Indiana/Vincennes',
+  'America/Indiana/Winamac',
+  'America/Indiana/Marengo',
+  'America/Indiana/Petersburg',
+  'America/Indiana/Vevay',
+  'America/Chicago',
+  'America/Indiana/Tell_City',
+  'America/Indiana/Knox',
+  'America/Menominee',
+  'America/North_Dakota/Center',
+  'America/North_Dakota/New_Salem',
+  'America/North_Dakota/Beulah',
+  'America/Denver',
+  'America/Boise',
+  'America/Phoenix',
+  'America/Los_Angeles',
+  'America/Anchorage',
+  'America/Juneau',
+  'America/Sitka',
+  'America/Metlakatla',
+  'America/Yakutat',
+  'America/Nome',
+  'America/Adak',
+  'Pacific/Honolulu',
+  'America/Montevideo',
+  'Asia/Samarkand',
+  'Asia/Tashkent',
+  'America/Caracas',
+  'Asia/Ho_Chi_Minh',
+  'Pacific/Efate',
+  'Pacific/Wallis',
+  'Pacific/Apia',
+  'Africa/Johannesburg'
+];
+
+let date = new Date;
+aryIannaTimeZones.forEach((timeZone) => {
+
+  let strTime = date.toLocaleString("en-US", {
+    timeZone: `${timeZone}`
+  });
+  console.log(timeZone, strTime);
+});
+-->
